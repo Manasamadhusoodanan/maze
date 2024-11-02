@@ -6,7 +6,6 @@ const cellSize = 30; // Cell size for a larger maze
 const rows = canvas.height / cellSize;
 const cols = canvas.width / cellSize;
 let grid = [];
-let stack = [];
 let playerX = 0;
 let playerY = 0; // Initial player position
 
@@ -42,6 +41,17 @@ function setup() {
         }
         grid.push(rowCells);
     }
+    // Create dead ends manually
+    createDeadEnds();
+}
+
+// Create dead ends in the maze
+function createDeadEnds() {
+    // Example dead ends at (1, 2) and (3, 4)
+    grid[1][2].walls.bottom = false; // Dead end 1
+    grid[2][2].walls.top = false;    // Dead end 1
+    grid[3][4].walls.bottom = false; // Dead end 2
+    grid[4][4].walls.top = false;    // Dead end 2
 }
 
 // Utility function to get neighboring cells
@@ -79,7 +89,7 @@ function generateMaze() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let current = grid[0][0];
     current.visited = true;
-    stack = [current]; // Reset the stack on maze generation
+    let stack = [current]; // Reset the stack on maze generation
 
     while (stack.length > 0) {
         current.draw();
@@ -133,11 +143,16 @@ function movePlayer(direction) {
     if (direction === 'ArrowDown' && !grid[playerY][playerX].walls.bottom) nextY++;
     if (direction === 'ArrowLeft' && !grid[playerY][playerX].walls.left) nextX--;
 
-    // Check for boundaries and if the next cell is not a wall
+    // Ensure the player stays within boundaries of the maze
     if (nextX >= 0 && nextX < cols && nextY >= 0 && nextY < rows) {
         playerX = nextX;
         playerY = nextY;
         drawMazeWithPlayer();
+
+        // Check if player reaches the center of the maze (assuming center is at (cols/2, rows/2))
+        if (playerX === Math.floor(cols / 2) && playerY === Math.floor(rows / 2)) {
+            alert("You have won!");
+        }
     }
 }
 
