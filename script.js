@@ -8,6 +8,7 @@ const cols = canvas.width / cellSize;
 let grid = [];
 let playerX = 0;
 let playerY = 0; // Initial player position
+let message = ""; // For displaying messages
 
 // Cell constructor
 function Cell(x, y) {
@@ -130,6 +131,7 @@ function drawPlayer() {
 function resetGame() {
     playerX = 0;
     playerY = 0;
+    message = ""; // Reset message
     drawPlayer();
 }
 
@@ -149,9 +151,9 @@ function movePlayer(direction) {
         playerY = nextY;
         drawMazeWithPlayer();
 
-        // Check if player reaches the center of the maze (assuming center is at (cols/2, rows/2))
-        if (playerX === Math.floor(cols / 2) && playerY === Math.floor(rows / 2)) {
-            alert("You have won!");
+        // Check if player reaches the bottom of the maze
+        if (playerY === rows - 1) {
+            displayMessage("Congrats, you have won!");
         }
     }
 }
@@ -165,6 +167,26 @@ function drawMazeWithPlayer() {
         }
     }
     drawPlayer();
+    drawMessage();
+}
+
+// Function to display messages
+function displayMessage(msg) {
+    message = msg; // Set the message
+    setTimeout(() => {
+        message = ""; // Clear the message after 2 seconds
+        drawMazeWithPlayer(); // Redraw the maze to clear the message
+    }, 2000); // Message will disappear after 2000 ms (2 seconds)
+}
+
+// Draw the message on the canvas
+function drawMessage() {
+    if (message) {
+        ctx.fillStyle = 'black';
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+    }
 }
 
 // Start the game when the button is clicked
